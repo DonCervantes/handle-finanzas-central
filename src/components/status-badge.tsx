@@ -24,6 +24,8 @@ const map: Record<string, { label: string; tone: Tone }> = {
   inactivo: { label: "Inactivo", tone: "neutral" },
   vacaciones: { label: "Vacaciones", tone: "warning" },
   baja: { label: "Baja", tone: "neutral" },
+  activa: { label: "Activa", tone: "success" },
+  inactiva: { label: "Sin configurar", tone: "warning" },
 };
 
 export function StatusBadge({ status, className }: { status: string; className?: string }) {

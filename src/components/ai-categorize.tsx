@@ -7,7 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { NativeSelect } from "@/components/form-bits";
-import { CATEGORIES, suggestCategories } from "@/lib/ai.functions";
+import { suggestCategories } from "@/lib/ai.functions";
+import { CATEGORIES } from "@/lib/categories";
 import { formatMXN } from "@/lib/format";
 
 type Row = { id: string; description: string | null; amount: number; type: string; current: string; suggested: string; accept: boolean };

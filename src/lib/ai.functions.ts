@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { groqChat, runAgent, MissingKeyError, GROQ_MODEL } from "./ai.server";
 import { N8N_EVENTS } from "./n8n.server";
 
-export const CATEGORIES = ["Ventas", "Servicios", "Nómina", "Renta", "Proveedores", "Software", "Operación", "Impuestos", "Marketing", "Transporte", "General"];
+import { CATEGORIES } from "./categories";
 
 type Result<T> = { ok: true; data: T } | { ok: false; error: string; missingKey?: boolean };
 const toError = (e: unknown) => ({
