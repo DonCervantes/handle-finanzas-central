@@ -40,7 +40,10 @@ function AuthPage() {
       password: String(f.get("password")),
     });
     setLoading(false);
-    if (error) return toast.error("Correo o contraseña incorrectos");
+    if (error) {
+      toast.error("Correo o contraseña incorrectos");
+      return;
+    }
     navigate({ to: "/dashboard", replace: true });
   }
 
@@ -57,7 +60,10 @@ function AuthPage() {
       },
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     if (data.session) navigate({ to: "/dashboard", replace: true });
     else setSent(true);
   }

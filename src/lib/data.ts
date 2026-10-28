@@ -31,7 +31,11 @@ export const clientsQuery = queryOptions({
 export const clientQuery = (id: string) =>
   queryOptions({
     queryKey: ["clients", id],
-    queryFn: () => run(supabase.from("clients").select("*, client_contacts(*)").eq("id", id).single()),
+    queryFn: async () => {
+      const { data, error } = await supabase.from("clients").select("*, client_contacts(*)").eq("id", id).single();
+      if (error) throw error;
+      return data;
+    },
   });
 
 export const employeesQuery = queryOptions({
