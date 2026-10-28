@@ -72,8 +72,19 @@ function AuthPage() {
       );
       return;
     }
-    if (data.session) navigate({ to: "/dashboard", replace: true });
-    else setSent(true);
+    if (data.session) {
+      navigate({ to: "/dashboard", replace: true });
+      return;
+    }
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email: String(f.get("email")),
+      password: String(f.get("password")),
+    });
+    if (loginError) {
+      toast.error("Tu cuenta se creó, pero no pudimos iniciar sesión. Intenta entrar.");
+      return;
+    }
+    navigate({ to: "/dashboard", replace: true });
   }
 
   return (
