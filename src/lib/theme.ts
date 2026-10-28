@@ -1,6 +1,6 @@
 export function applyStoredTheme() {
   const t = localStorage.getItem("handle-theme");
-  const dark = t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const dark = t === "dark"; // light by default; only an explicit choice enables dark
   document.documentElement.classList.toggle("dark", dark);
 }
 
