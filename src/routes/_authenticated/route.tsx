@@ -12,6 +12,7 @@ import {
   Moon,
   Sun,
   Menu,
+  Code2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/logo";
@@ -44,6 +45,7 @@ const nav = [
   { to: "/pagos", label: "Pagos a proveedores", icon: Send },
   { to: "/clientes", label: "Clientes", icon: Users },
   { to: "/colaboradores", label: "Colaboradores", icon: UserCog },
+  { to: "/api", label: "API", icon: Code2 },
 ] as const;
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {

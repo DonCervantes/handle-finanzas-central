@@ -20,3 +20,4 @@
 - Outbound automation uses `emitN8nEvent` (`n8n.server.ts`, N8N_WEBHOOK_URL): never throws, 5s timeout, no-op when unset. Why: automation must never block or revert a payment.
 - Directory filtering and client statement selection live in browser-safe pure helpers; URL search parameters preserve filters across navigation.
 - Shared table feedback and route metadata helpers keep loading, empty, error and social-preview states consistent without altering payment or AI workflows.
+- Handle API v1 routes live under src/routes/api/v1; they authenticate with hashed org API keys (api-keys.server.ts) and query with the admin client filtered by the key's org_id. Why: external callers have no user session.
