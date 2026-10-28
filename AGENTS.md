@@ -13,3 +13,6 @@
 - Signup trigger `handle_new_user` creates the organization, the owner profile and calls `seed_demo_data(org)`. Why: new accounts see realistic data immediately.
 - Profile `role` is only writable by service role (column-level grant on `full_name` only). Why: prevent self privilege escalation.
 - App pages live under `src/routes/_authenticated/` and read data with the browser client + TanStack Query (`src/lib/data.ts`). Why: RLS-scoped reads, client-only gate.
+- Stellar payments run in TanStack server functions (`src/lib/payments.functions.ts`), not Edge Functions; Stellar helpers in `stellar.server.ts` use `@stellar/stellar-base` + Horizon via fetch (worker-safe, no full SDK). TESTNET only.
+- Org custody secret keys live in `org_wallets` (RLS on, no client grants); read only with the admin client inside handlers, never returned. Confirmation goes through `finalize_payment()` (service_role only) to atomically mark confirmed, insert the expense and debit the wallet account.
+- Quotes go through the `QuoteProvider` interface in `quote.server.ts`; swap the fixed-rate stub for Etherfuse there.
