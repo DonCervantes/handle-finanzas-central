@@ -6,6 +6,8 @@ import { Logo } from "@/components/logo";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Handle — El ERP ligero para PyMEs de LATAM" },
       { name: "description", content: "Finanzas, pagos a proveedores, CRM y RH en una sola plataforma pensada para México." },
       { property: "og:title", content: "Handle — El ERP ligero para PyMEs de LATAM" },

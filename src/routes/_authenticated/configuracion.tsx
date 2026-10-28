@@ -9,9 +9,10 @@ import type React from "react";
 import { StatusBadge } from "@/components/status-badge";
 import { meQuery } from "@/lib/session";
 import { roleLabels } from "@/lib/format";
+import { pageMeta } from "@/lib/metadata";
 
 export const Route = createFileRoute("/_authenticated/configuracion")({
-  head: () => ({ meta: [{ title: "Configuración — Handle" }, { name: "description", content: "Ajustes de tu organización." }] }),
+  head: () => pageMeta("Configuración", "Datos de tu organización e integraciones de Handle."),
   component: Configuracion,
 });
 
@@ -31,9 +32,9 @@ function Configuracion() {
       <Card className="max-w-xl shadow-card">
         <CardContent className="divide-y p-0">
           {rows.map(([k, v]) => (
-            <div key={k} className="flex justify-between px-6 py-4 text-sm">
+            <div key={k} className="grid grid-cols-[auto_minmax(0,1fr)] gap-4 px-6 py-4 text-sm">
               <span className="text-muted-foreground">{k}</span>
-              <span className="font-medium">{v ?? "—"}</span>
+              <span className="break-words text-right font-medium">{v ?? "—"}</span>
             </div>
           ))}
         </CardContent>
@@ -68,10 +69,10 @@ function IntegrationCard({ icon, title, active, detail, hint, missing }: { icon:
   return (
     <Card className="shadow-card">
       <CardContent className="p-5">
-        <div className="flex items-center gap-3">
+        <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
           <span className="grid size-9 place-items-center rounded-lg bg-accent text-accent-foreground">{icon}</span>
-          <p className="font-semibold">{title}</p>
-          <span className="ml-auto">
+          <p className="min-w-0 break-words font-semibold">{title}</p>
+          <span className="col-span-2">
             {active === undefined ? null : <StatusBadge status={active ? "activa" : "inactiva"} />}
           </span>
         </div>
