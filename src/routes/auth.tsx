@@ -61,7 +61,13 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error(
+        /not allowed|invalid/i.test(error.message)
+          ? "Ese correo no es válido. Usa un correo real."
+          : /registered|exists/i.test(error.message)
+            ? "Ese correo ya tiene una cuenta. Inicia sesión."
+            : "No pudimos crear tu cuenta. Intenta de nuevo.",
+      );
       return;
     }
     if (data.session) navigate({ to: "/dashboard", replace: true });
