@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { friendbot, getXlmBalance, isValidAddress, newKeypair, sendXlm, topUp } from "./stellar.server";
 import { getQuoteProvider } from "./quote.server";
+import { emitN8nEvent } from "./n8n.server";
 
 // The demo always settles in native XLM (no trustlines needed).
 const SETTLEMENT_ASSET = "XLM";
@@ -140,6 +141,24 @@ export const submitPayment = createServerFn({ method: "POST" })
         console.error("finalize_payment", error);
         await db.from("payments").update({ status: "confirmed", stellar_tx_hash: hash }).eq("id", p.id);
       }
+      // Fail-safe automation: never blocks or reverts the payment.
+      const { data: full } = await db
+        .from("payments")
+        .select("org_id, amount_fiat, currency_fiat, amount_token, asset_code")
+        .eq("id", p.id)
+        .single();
+      await emitN8nEvent("payment.confirmed", {
+        payment_id: p.id,
+        org_id: full?.org_id ?? orgId,
+        supplier: { name: p.suppliers?.name ?? null, stellar_address: dest },
+        amount_fiat: Number(full?.amount_fiat),
+        currency_fiat: full?.currency_fiat,
+        amount_token: Number(full?.amount_token),
+        asset_code: full?.asset_code,
+        stellar_tx_hash: hash,
+        explorer_url: `https://stellar.expert/explorer/testnet/tx/${hash}`,
+        network: "testnet",
+      });
       return { ok: true as const, hash };
     } catch (e) {
       console.error("submitPayment", e);

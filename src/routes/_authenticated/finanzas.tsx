@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyRow, FormField, NativeSelect } from "@/components/form-bits";
+import { AiCategorize } from "@/components/ai-categorize";
 import { accountsQuery, transactionsQuery } from "@/lib/data";
 import { formatDate, formatMXN } from "@/lib/format";
 
@@ -40,7 +41,7 @@ function Finanzas() {
       <PageHeader
         title="Finanzas"
         description="Registra y consulta los movimientos de tus cuentas."
-        actions={<NewTransaction accounts={accounts} categories={categories} />}
+        actions={<><AiCategorize /><NewTransaction accounts={accounts} categories={categories} /></>}
       />
       <div className="mb-6 grid gap-3 sm:grid-cols-3">
         {accounts.map((a) => (

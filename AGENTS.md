@@ -16,3 +16,5 @@
 - Stellar payments run in TanStack server functions (`src/lib/payments.functions.ts`), not Edge Functions; Stellar helpers in `stellar.server.ts` use `@stellar/stellar-base` + Horizon via fetch (worker-safe, no full SDK). TESTNET only.
 - Org custody secret keys live in `org_wallets` (RLS on, no client grants); read only with the admin client inside handlers, never returned. Confirmation goes through `finalize_payment()` (service_role only) to atomically mark confirmed, insert the expense and debit the wallet account.
 - Quotes go through the `QuoteProvider` interface in `quote.server.ts`; swap the fixed-rate stub for Etherfuse there.
+- AI calls go through `groqChat` + `runAgent` in `src/lib/ai.server.ts` (Groq OpenAI-compatible API, key GROQ_API_KEY); every call is logged to `agent_runs` via the user's RLS client. Assistant context is built server-side from the caller's org only.
+- Outbound automation uses `emitN8nEvent` (`n8n.server.ts`, N8N_WEBHOOK_URL): never throws, 5s timeout, no-op when unset. Why: automation must never block or revert a payment.
