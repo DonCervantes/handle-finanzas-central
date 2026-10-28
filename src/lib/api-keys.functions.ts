@@ -16,7 +16,7 @@ export const createApiKey = createServerFn({ method: "POST" })
     const { key, prefix } = generateApiKey();
     const { error } = await context.supabase
       .from("api_keys")
-      .insert({ name: data.name, key_prefix: prefix, key_hash: await hashApiKey(key) });
+      .insert({ name: data.name, key_prefix: prefix, key_hash: await hashApiKey(key) } as never);
     if (error) throw new Error("No pudimos crear la API key.");
     return { key, prefix };
   });
