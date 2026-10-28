@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { groqChat, runAgent, MissingKeyError, GROQ_MODEL } from "./ai.server";
+import { groqChat, runAgent, MissingKeyError, getGroqModel } from "./ai.server";
 import { N8N_EVENTS } from "./n8n.server";
 
 import { CATEGORIES } from "./categories";
@@ -125,6 +125,6 @@ export const suggestCategories = createServerFn({ method: "POST" })
 export const getIntegrationsStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async () => ({
-    groq: { configured: !!process.env["GROQ_API_KEY"], model: GROQ_MODEL },
+    groq: { configured: !!process.env["GROQ_API_KEY"], model: getGroqModel() },
     n8n: { configured: !!process.env["N8N_WEBHOOK_URL"], events: [...N8N_EVENTS] },
   }));
