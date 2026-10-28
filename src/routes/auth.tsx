@@ -81,7 +81,7 @@ function AuthPage() {
         <div className="m-auto w-full max-w-sm py-12">
           {sent ? (
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight">Revisa tu correo</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Revisa tu correo</h1>
               <p className="mt-2 text-sm text-muted-foreground">
                 Te enviamos un enlace para confirmar tu cuenta. Después podrás iniciar sesión.
               </p>
@@ -91,7 +91,7 @@ function AuthPage() {
             </div>
           ) : (
             <Tabs defaultValue="login">
-              <h1 className="text-2xl font-semibold tracking-tight">Bienvenido a Handle</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Bienvenido a Handle</h1>
               <p className="mb-6 mt-1 text-sm text-muted-foreground">Administra tu PyME con claridad.</p>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Iniciar sesión</TabsTrigger>

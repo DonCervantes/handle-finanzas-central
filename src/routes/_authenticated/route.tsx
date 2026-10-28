@@ -141,7 +141,7 @@ function AppShell() {
                 <DropdownMenuLabel>
                   <p className="truncate">{me?.full_name}</p>
                   <p className="truncate text-xs font-normal text-muted-foreground">{me?.email}</p>
-                  <p className="mt-1 text-xs font-normal text-primary">{roleLabels[me?.role ?? ""]}</p>
+                  <p className="mt-1 text-xs font-normal text-gold">{roleLabels[me?.role ?? ""]}</p>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate({ to: "/configuracion" })}>

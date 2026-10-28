@@ -94,7 +94,7 @@ function Pagos() {
                   </TableCell>
                   <TableCell>
                     {p.stellar_tx_hash ? (
-                      <a href={`${EXPLORER}/tx/${p.stellar_tx_hash}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-primary hover:underline">
+                      <a href={`${EXPLORER}/tx/${p.stellar_tx_hash}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-xs text-gold hover:underline">
                         {short(p.stellar_tx_hash)} <ExternalLink className="size-3" />
                       </a>
                     ) : (
@@ -151,11 +151,11 @@ function CustodyCard() {
             <p className="mt-1 text-sm text-destructive">No se pudo cargar la cuenta custodia.</p>
           ) : (
             <>
-              <p className="tabular mt-1 text-2xl font-semibold tracking-tight">
+              <p className="tabular mt-1 text-2xl font-bold tracking-tight">
                 {bal == null ? "—" : bal.toLocaleString("es-MX", { maximumFractionDigits: 2 })} <span className="text-base font-medium text-muted-foreground">XLM</span>
               </p>
               <div className="mt-1 flex items-center gap-2">
-                <a href={`${EXPLORER}/account/${q.data?.publicKey}`} target="_blank" rel="noreferrer" className="truncate font-mono text-xs text-muted-foreground hover:text-primary">
+                <a href={`${EXPLORER}/account/${q.data?.publicKey}`} target="_blank" rel="noreferrer" className="truncate font-mono text-xs text-muted-foreground hover:text-gold">
                   {short(q.data?.publicKey)}
                 </a>
                 <button aria-label="Copiar dirección" className="text-muted-foreground hover:text-foreground" onClick={() => { navigator.clipboard.writeText(q.data!.publicKey); toast.success("Dirección copiada"); }}>
@@ -212,7 +212,7 @@ function SuppliersTable({ suppliers }: { suppliers: Tables<"suppliers">[] }) {
               <TableCell className="font-medium">{s.name}</TableCell>
               <TableCell>
                 {s.stellar_address ? (
-                  <a href={`${EXPLORER}/account/${s.stellar_address}`} target="_blank" rel="noreferrer" className="font-mono text-xs text-muted-foreground hover:text-primary">
+                  <a href={`${EXPLORER}/account/${s.stellar_address}`} target="_blank" rel="noreferrer" className="font-mono text-xs text-muted-foreground hover:text-gold">
                     {short(s.stellar_address)}
                   </a>
                 ) : (

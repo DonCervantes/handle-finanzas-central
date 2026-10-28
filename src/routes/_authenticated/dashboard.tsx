@@ -60,7 +60,7 @@ function Dashboard() {
                 {s.label}
                 <s.icon className={`size-4 ${s.tone ?? ""}`} />
               </div>
-              <p className="tabular mt-3 text-2xl font-semibold tracking-tight">{s.value}</p>
+              <p className="tabular mt-3 text-2xl font-bold tracking-tight">{s.value}</p>
             </CardContent>
           </Card>
         ))}
