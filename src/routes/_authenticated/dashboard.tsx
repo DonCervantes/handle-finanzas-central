@@ -4,6 +4,7 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 import { ArrowDownRight, ArrowUpRight, Users, UserCog, Wallet } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FinanceAssistant } from "@/components/finance-assistant";
 import { StatusBadge } from "@/components/status-badge";
 import { accountsQuery, clientsQuery, employeesQuery, transactionsQuery } from "@/lib/data";
 import { formatDate, formatMXN } from "@/lib/format";
@@ -120,6 +121,9 @@ function Dashboard() {
             ))}
           </CardContent>
         </Card>
+      </div>
+      <div className="mt-6">
+        <FinanceAssistant />
       </div>
     </>
   );
