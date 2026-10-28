@@ -1,6 +1,6 @@
 export function formatMXN(value: number | string | null | undefined, currency = "MXN") {
   const n = Number(value ?? 0);
-  return new Intl.NumberFormat("es-MX", { style: "currency", currency, maximumFractionDigits: 2 }).format(n);
+  return new Intl.NumberFormat("es-MX", { style: "currency", currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 }
 
 export function formatDate(value: string | Date | null | undefined) {
