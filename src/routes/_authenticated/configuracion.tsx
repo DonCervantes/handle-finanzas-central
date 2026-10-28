@@ -64,7 +64,7 @@ function Configuracion() {
   );
 }
 
-function IntegrationCard({ icon, title, active, detail, hint, missing }: { icon: React.ReactNode; title: string; active?: boolean; detail: string; hint: string; missing: string }) {
+function IntegrationCard({ icon, title, active, detail, hint, missing }: { icon: React.ReactNode; title: string; active?: boolean | undefined; detail: string; hint: string; missing: string }) {
   return (
     <Card className="shadow-card">
       <CardContent className="p-5">
