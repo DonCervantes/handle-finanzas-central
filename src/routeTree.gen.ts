@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedApiRouteImport } from './routes/_authenticated/api'
 import { Route as AuthenticatedColaboradoresRouteImport } from './routes/_authenticated/colaboradores'
 import { Route as AuthenticatedConfiguracionRouteImport } from './routes/_authenticated/configuracion'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -19,6 +20,9 @@ import { Route as AuthenticatedFinanzasRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedPagosRouteImport } from './routes/_authenticated/pagos'
 import { Route as AuthenticatedClientesIndexRouteImport } from './routes/_authenticated/clientes.index'
 import { Route as AuthenticatedClientesIdRouteImport } from './routes/_authenticated/clientes.$id'
+import { Route as ApiV1ClientsRouteImport } from './routes/api/v1/clients'
+import { Route as ApiV1PaymentsRouteImport } from './routes/api/v1/payments'
+import { Route as ApiV1TransactionsRouteImport } from './routes/api/v1/transactions'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -33,6 +37,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedApiRoute = AuthenticatedApiRouteImport.update({
+  id: '/api',
+  path: '/api',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedColaboradoresRoute =
   AuthenticatedColaboradoresRouteImport.update({
@@ -72,27 +81,50 @@ const AuthenticatedClientesIdRoute = AuthenticatedClientesIdRouteImport.update({
   path: '/clientes/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiV1ClientsRoute = ApiV1ClientsRouteImport.update({
+  id: '/api/v1/clients',
+  path: '/api/v1/clients',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1PaymentsRoute = ApiV1PaymentsRouteImport.update({
+  id: '/api/v1/payments',
+  path: '/api/v1/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1TransactionsRoute = ApiV1TransactionsRouteImport.update({
+  id: '/api/v1/transactions',
+  path: '/api/v1/transactions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/api': typeof AuthenticatedApiRoute
   '/colaboradores': typeof AuthenticatedColaboradoresRoute
   '/configuracion': typeof AuthenticatedConfiguracionRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/finanzas': typeof AuthenticatedFinanzasRoute
   '/pagos': typeof AuthenticatedPagosRoute
   '/clientes/$id': typeof AuthenticatedClientesIdRoute
+  '/api/v1/clients': typeof ApiV1ClientsRoute
+  '/api/v1/payments': typeof ApiV1PaymentsRoute
+  '/api/v1/transactions': typeof ApiV1TransactionsRoute
   '/clientes/': typeof AuthenticatedClientesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/api': typeof AuthenticatedApiRoute
   '/colaboradores': typeof AuthenticatedColaboradoresRoute
   '/configuracion': typeof AuthenticatedConfiguracionRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/finanzas': typeof AuthenticatedFinanzasRoute
   '/pagos': typeof AuthenticatedPagosRoute
   '/clientes/$id': typeof AuthenticatedClientesIdRoute
+  '/api/v1/clients': typeof ApiV1ClientsRoute
+  '/api/v1/payments': typeof ApiV1PaymentsRoute
+  '/api/v1/transactions': typeof ApiV1TransactionsRoute
   '/clientes': typeof AuthenticatedClientesIndexRoute
 }
 export interface FileRoutesById {
@@ -100,12 +132,16 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/api': typeof AuthenticatedApiRoute
   '/_authenticated/colaboradores': typeof AuthenticatedColaboradoresRoute
   '/_authenticated/configuracion': typeof AuthenticatedConfiguracionRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/finanzas': typeof AuthenticatedFinanzasRoute
   '/_authenticated/pagos': typeof AuthenticatedPagosRoute
   '/_authenticated/clientes/$id': typeof AuthenticatedClientesIdRoute
+  '/api/v1/clients': typeof ApiV1ClientsRoute
+  '/api/v1/payments': typeof ApiV1PaymentsRoute
+  '/api/v1/transactions': typeof ApiV1TransactionsRoute
   '/_authenticated/clientes/': typeof AuthenticatedClientesIndexRoute
 }
 export interface FileRouteTypes {
@@ -113,35 +149,47 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/api'
     | '/colaboradores'
     | '/configuracion'
     | '/dashboard'
     | '/finanzas'
     | '/pagos'
     | '/clientes/$id'
+    | '/api/v1/clients'
+    | '/api/v1/payments'
+    | '/api/v1/transactions'
     | '/clientes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/api'
     | '/colaboradores'
     | '/configuracion'
     | '/dashboard'
     | '/finanzas'
     | '/pagos'
     | '/clientes/$id'
+    | '/api/v1/clients'
+    | '/api/v1/payments'
+    | '/api/v1/transactions'
     | '/clientes'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/api'
     | '/_authenticated/colaboradores'
     | '/_authenticated/configuracion'
     | '/_authenticated/dashboard'
     | '/_authenticated/finanzas'
     | '/_authenticated/pagos'
     | '/_authenticated/clientes/$id'
+    | '/api/v1/clients'
+    | '/api/v1/payments'
+    | '/api/v1/transactions'
     | '/_authenticated/clientes/'
   fileRoutesById: FileRoutesById
 }
@@ -149,6 +197,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiV1ClientsRoute: typeof ApiV1ClientsRoute
+  ApiV1PaymentsRoute: typeof ApiV1PaymentsRoute
+  ApiV1TransactionsRoute: typeof ApiV1TransactionsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -173,6 +224,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/api': {
+      id: '/_authenticated/api'
+      path: '/api'
+      fullPath: '/api'
+      preLoaderRoute: typeof AuthenticatedApiRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/colaboradores': {
       id: '/_authenticated/colaboradores'
@@ -223,10 +281,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientesIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/v1/clients': {
+      id: '/api/v1/clients'
+      path: '/api/v1/clients'
+      fullPath: '/api/v1/clients'
+      preLoaderRoute: typeof ApiV1ClientsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/payments': {
+      id: '/api/v1/payments'
+      path: '/api/v1/payments'
+      fullPath: '/api/v1/payments'
+      preLoaderRoute: typeof ApiV1PaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/transactions': {
+      id: '/api/v1/transactions'
+      path: '/api/v1/transactions'
+      fullPath: '/api/v1/transactions'
+      preLoaderRoute: typeof ApiV1TransactionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedApiRoute: typeof AuthenticatedApiRoute
   AuthenticatedColaboradoresRoute: typeof AuthenticatedColaboradoresRoute
   AuthenticatedConfiguracionRoute: typeof AuthenticatedConfiguracionRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
@@ -237,6 +317,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedApiRoute: AuthenticatedApiRoute,
   AuthenticatedColaboradoresRoute: AuthenticatedColaboradoresRoute,
   AuthenticatedConfiguracionRoute: AuthenticatedConfiguracionRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
@@ -253,6 +334,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiV1ClientsRoute: ApiV1ClientsRoute,
+  ApiV1PaymentsRoute: ApiV1PaymentsRoute,
+  ApiV1TransactionsRoute: ApiV1TransactionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
