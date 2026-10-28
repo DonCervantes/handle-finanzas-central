@@ -1,5 +1,6 @@
 // Groq (OpenAI-compatible) client + agent_runs logging. Server-only.
-export const GROQ_MODEL = "llama-3.3-70b-versatile";
+export const DEFAULT_GROQ_MODEL = "llama-3.1-8b-instant";
+export const getGroqModel = () => process.env["GROQ_MODEL"]?.trim() || DEFAULT_GROQ_MODEL;
 
 export class MissingKeyError extends Error {}
 
@@ -12,7 +13,7 @@ export async function groqChat(messages: Msg[], opts: { json?: boolean; temperat
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: GROQ_MODEL,
+      model: getGroqModel(),
       messages,
       temperature: opts.temperature ?? 0.3,
       ...(opts.json ? { response_format: { type: "json_object" } } : {}),
@@ -20,10 +21,12 @@ export async function groqChat(messages: Msg[], opts: { json?: boolean; temperat
   });
   if (!res.ok) {
     const body = await res.text();
-    console.error(`Groq error [${res.status}]: ${body}`);
-    if (res.status === 401) throw new Error("La clave de Groq no es válida. Revísala en los secretos del proyecto.");
+    console.error(`Groq error [${res.status}] model=${getGroqModel()}: ${body}`);
+    let detail = body.slice(0, 300);
+    try { detail = (JSON.parse(body) as { error?: { message?: string } }).error?.message ?? detail; } catch {}
+    if (res.status === 401) throw new Error(`La clave de Groq no es válida (401): ${detail}`);
     if (res.status === 429) throw new Error("Groq está limitando las solicitudes. Intenta en unos segundos.");
-    throw new Error(`El servicio de IA respondió con error (${res.status}).`);
+    throw new Error(`Groq respondió con error ${res.status} (modelo ${getGroqModel()}): ${detail}`);
   }
   const json = (await res.json()) as { choices: { message: { content: string } }[]; usage?: { total_tokens?: number } };
   return { content: json.choices[0]?.message?.content ?? "", tokens: json.usage?.total_tokens ?? null };
