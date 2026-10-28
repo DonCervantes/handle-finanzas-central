@@ -19,7 +19,7 @@ import { pageMeta } from "@/lib/metadata";
 import { DirectoryLoading, DirectoryError } from "@/components/directory-feedback";
 
 export const Route = createFileRoute("/_authenticated/clientes/")({
-  validateSearch: (search: Record<string, unknown>) => ({ q: typeof search.q === "string" ? search.q : "", status: typeof search.status === "string" ? search.status : "" }),
+  validateSearch: (search: Record<string, unknown>) => ({ q: typeof search["q"] === "string" ? search["q"] : "", status: typeof search["status"] === "string" ? search["status"] : "" }),
   loader: async ({ context }) => { await context.queryClient.ensureQueryData(clientsQuery); },
   head: () => pageMeta("Clientes", "Directorio de clientes, contactos y saldos por cobrar en Handle."),
   pendingComponent: DirectoryLoading,

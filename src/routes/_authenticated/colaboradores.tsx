@@ -21,7 +21,7 @@ import { DirectoryLoading, DirectoryError } from "@/components/directory-feedbac
 import { DeleteConfirmation } from "@/components/delete-confirmation";
 
 export const Route = createFileRoute("/_authenticated/colaboradores")({
-  validateSearch: (search: Record<string, unknown>) => ({ q: typeof search.q === "string" ? search.q : "", status: typeof search.status === "string" ? search.status : "" }),
+  validateSearch: (search: Record<string, unknown>) => ({ q: typeof search["q"] === "string" ? search["q"] : "", status: typeof search["status"] === "string" ? search["status"] : "" }),
   loader: async ({ context }) => { await context.queryClient.ensureQueryData(employeesQuery); },
   head: () => pageMeta("Colaboradores", "Directorio de colaboradores y datos de tu equipo en Handle."),
   pendingComponent: DirectoryLoading,

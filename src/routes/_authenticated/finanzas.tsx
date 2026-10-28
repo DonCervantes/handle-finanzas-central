@@ -19,7 +19,7 @@ import { pageMeta } from "@/lib/metadata";
 import { DirectoryLoading, DirectoryError } from "@/components/directory-feedback";
 
 export const Route = createFileRoute("/_authenticated/finanzas")({
-  validateSearch: (search: Record<string, unknown>) => ({ from: typeof search.from === "string" ? search.from : "", to: typeof search.to === "string" ? search.to : "", cat: typeof search.cat === "string" ? search.cat : "" }),
+  validateSearch: (search: Record<string, unknown>) => ({ from: typeof search["from"] === "string" ? search["from"] : "", to: typeof search["to"] === "string" ? search["to"] : "", cat: typeof search["cat"] === "string" ? search["cat"] : "" }),
   loader: async ({ context }) => { await Promise.all([context.queryClient.ensureQueryData(transactionsQuery), context.queryClient.ensureQueryData(accountsQuery), context.queryClient.ensureQueryData(clientsQuery)]); },
   head: () => pageMeta("Finanzas", "Ingresos, egresos y saldos de tus cuentas en Handle."),
   pendingComponent: DirectoryLoading,
