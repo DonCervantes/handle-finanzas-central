@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Banknote,
@@ -73,6 +73,18 @@ function AppShell() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const qc = useQueryClient();
+
+  // Realtime: refresh lists when payments, transactions or balances change.
+  useEffect(() => {
+    const ch = supabase.channel(`org-live-${Math.random().toString(36).slice(2)}`);
+    for (const table of ["payments", "transactions", "accounts"]) {
+      ch.on("postgres_changes", { event: "*", schema: "public", table }, () => qc.invalidateQueries({ queryKey: [table] }));
+    }
+    ch.subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [qc]);
 
   async function signOut() {
     await qc.cancelQueries();

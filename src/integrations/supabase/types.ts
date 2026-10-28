@@ -236,6 +236,38 @@ export type Database = {
           },
         ]
       }
+      org_wallets: {
+        Row: {
+          created_at: string
+          network: string
+          org_id: string
+          public_key: string
+          secret_key: string
+        }
+        Insert: {
+          created_at?: string
+          network?: string
+          org_id: string
+          public_key: string
+          secret_key: string
+        }
+        Update: {
+          created_at?: string
+          network?: string
+          org_id?: string
+          public_key?: string
+          secret_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_wallets_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           country: string
@@ -265,36 +297,45 @@ export type Database = {
           amount_fiat: number
           amount_token: number | null
           asset_code: string | null
+          confirmed_at: string | null
           created_at: string
           currency_fiat: string
+          error_message: string | null
           id: string
           org_id: string | null
           status: string
           stellar_tx_hash: string | null
+          submitted_at: string | null
           supplier_id: string
         }
         Insert: {
           amount_fiat: number
           amount_token?: number | null
           asset_code?: string | null
+          confirmed_at?: string | null
           created_at?: string
           currency_fiat?: string
+          error_message?: string | null
           id?: string
           org_id?: string | null
           status?: string
           stellar_tx_hash?: string | null
+          submitted_at?: string | null
           supplier_id: string
         }
         Update: {
           amount_fiat?: number
           amount_token?: number | null
           asset_code?: string | null
+          confirmed_at?: string | null
           created_at?: string
           currency_fiat?: string
+          error_message?: string | null
           id?: string
           org_id?: string | null
           status?: string
           stellar_tx_hash?: string | null
+          submitted_at?: string | null
           supplier_id?: string
         }
         Relationships: [
@@ -468,6 +509,10 @@ export type Database = {
     }
     Functions: {
       current_org_id: { Args: never; Returns: string }
+      finalize_payment: {
+        Args: { _hash: string; _payment_id: string }
+        Returns: undefined
+      }
       seed_demo_data: { Args: { _org: string }; Returns: undefined }
     }
     Enums: {
