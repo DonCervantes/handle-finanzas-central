@@ -16,10 +16,12 @@ import { StatusBadge } from "@/components/status-badge";
 import { EmptyRow, FormField, NativeSelect } from "@/components/form-bits";
 import { paymentsQuery, suppliersQuery } from "@/lib/data";
 import { formatDate, formatMXN } from "@/lib/format";
+import { pageMeta } from "@/lib/metadata";
+import { TableFeedback } from "@/components/table-feedback";
 import { createPayment, generateSupplierWallet, getCustodyWallet, submitPayment, topUpCustody } from "@/lib/payments.functions";
 
 export const Route = createFileRoute("/_authenticated/pagos")({
-  head: () => ({ meta: [{ title: "Pagos a proveedores — Handle" }, { name: "description", content: "Pagos on-chain a proveedores en Stellar." }] }),
+  head: () => pageMeta("Pagos a proveedores", "Órdenes de pago y proveedores en Stellar testnet en Handle."),
   component: Pagos,
 });
 
@@ -29,8 +31,10 @@ const fmtToken = (n: number | null, code: string | null) =>
   n == null ? "—" : `${Number(n).toLocaleString("es-MX", { maximumFractionDigits: 4 })} ${code ?? ""}`;
 
 function Pagos() {
-  const { data: suppliers = [] } = useQuery(suppliersQuery);
-  const { data: payments = [] } = useQuery(paymentsQuery);
+  const suppliersState = useQuery(suppliersQuery);
+  const { data: suppliers = [] } = suppliersState;
+  const paymentsState = useQuery(paymentsQuery);
+  const { data: payments = [] } = paymentsState;
   const qc = useQueryClient();
   const submitFn = useServerFn(submitPayment);
   const [sending, setSending] = useState<string | null>(null);
@@ -76,7 +80,8 @@ function Pagos() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {payments.length === 0 && <EmptyRow cols={7} text="Aún no hay pagos." />}
+            <TableFeedback cols={7} loading={paymentsState.isPending} error={paymentsState.error} retry={() => paymentsState.refetch()} />
+            {!paymentsState.isPending && !paymentsState.error && payments.length === 0 && <EmptyRow cols={7} text={suppliers.length ? "Crea tu primera orden de pago cuando estés listo." : "Agrega un proveedor para crear tu primera orden de pago."} action={suppliers.length ? <NewPayment suppliers={suppliers} /> : <SupplierDialog />} />}
             {payments.map((p) => {
               const canSend = (p.status === "draft" || p.status === "failed") && p.asset_code === "XLM";
               const busy = sending === p.id;
@@ -116,7 +121,7 @@ function Pagos() {
         </Table>
       </Card>
 
-      <SuppliersTable suppliers={suppliers} />
+      <SuppliersTable suppliers={suppliers} loading={suppliersState.isPending} error={suppliersState.error} retry={() => suppliersState.refetch()} />
     </>
   );
 }
@@ -136,19 +141,19 @@ function CustodyCard() {
 
   return (
     <Card className="flex flex-col gap-4 p-6 shadow-card sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex items-start gap-4">
+      <div className="flex min-w-0 items-start gap-4">
         <div className="bg-brand-gradient grid size-11 shrink-0 place-items-center rounded-xl text-primary-foreground">
           <Wallet className="size-5" />
         </div>
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
             <p className="text-sm text-muted-foreground">Cuenta custodia de la organización</p>
             <span className="rounded-full bg-warning/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-warning">Testnet</span>
           </div>
           {q.isLoading ? (
             <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="size-4 animate-spin" /> Preparando cuenta…</p>
           ) : q.error ? (
-            <p className="mt-1 text-sm text-destructive">No se pudo cargar la cuenta custodia.</p>
+            <div className="mt-1"><p className="text-sm text-destructive">No se pudo cargar la cuenta custodia.</p><Button variant="ghost" size="sm" onClick={() => q.refetch()}>Reintentar</Button></div>
           ) : (
             <>
               <p className="tabular mt-1 text-2xl font-bold tracking-tight">
@@ -158,9 +163,7 @@ function CustodyCard() {
                 <a href={`${EXPLORER}/account/${q.data?.publicKey}`} target="_blank" rel="noreferrer" className="truncate font-mono text-xs text-muted-foreground hover:text-gold">
                   {short(q.data?.publicKey)}
                 </a>
-                <button aria-label="Copiar dirección" className="text-muted-foreground hover:text-foreground" onClick={() => { navigator.clipboard.writeText(q.data!.publicKey); toast.success("Dirección copiada"); }}>
-                  <Copy className="size-3.5" />
-                </button>
+                <Button variant="ghost" size="icon" aria-label="Copiar dirección" title="Copiar dirección" onClick={async () => { const key = q.data?.publicKey; if (!key) return; try { await navigator.clipboard.writeText(key); toast.success("Dirección copiada"); } catch { toast.error("No pudimos copiar la dirección."); } }}><Copy className="size-3.5" /></Button>
               </div>
             </>
           )}
@@ -176,7 +179,7 @@ function CustodyCard() {
   );
 }
 
-function SuppliersTable({ suppliers }: { suppliers: Tables<"suppliers">[] }) {
+function SuppliersTable({ suppliers, loading, error, retry }: { suppliers: Tables<"suppliers">[]; loading: boolean; error: unknown; retry: () => void }) {
   const genFn = useServerFn(generateSupplierWallet);
   const qc = useQueryClient();
   const [busy, setBusy] = useState<string | null>(null);
@@ -206,7 +209,8 @@ function SuppliersTable({ suppliers }: { suppliers: Tables<"suppliers">[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {suppliers.length === 0 && <EmptyRow cols={5} text="Aún no hay proveedores." />}
+          <TableFeedback cols={5} loading={loading} error={error} retry={retry} />
+          {!loading && !error && suppliers.length === 0 && <EmptyRow cols={5} text="Agrega a tu primer proveedor para empezar." action={<SupplierDialog />} />}
           {suppliers.map((s) => (
             <TableRow key={s.id}>
               <TableCell className="font-medium">{s.name}</TableCell>

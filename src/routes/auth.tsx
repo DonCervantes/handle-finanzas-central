@@ -11,6 +11,8 @@ import { Logo } from "@/components/logo";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Iniciar sesión — Handle" },
       { name: "description", content: "Accede a tu cuenta de Handle o crea una organización nueva." },
       { property: "og:title", content: "Iniciar sesión — Handle" },

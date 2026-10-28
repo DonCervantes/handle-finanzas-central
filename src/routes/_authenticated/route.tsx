@@ -16,7 +16,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -109,14 +109,14 @@ function AppShell() {
         <NavLinks />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col md:pl-64">
-        <header className="sticky top-0 z-20 flex h-[4.5rem] items-center gap-3 border-b bg-background/80 px-4 backdrop-blur sm:px-8">
+        <header className="sticky top-0 z-20 flex h-[4.5rem] items-center gap-2 border-b bg-background/80 px-3 backdrop-blur sm:gap-3 sm:px-8">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir menú">
                 <Menu />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex w-64 flex-col bg-sidebar p-4">
+            <SheetContent side="left" className="flex w-64 flex-col bg-sidebar p-4"><SheetTitle className="sr-only">Menú de navegación Handle</SheetTitle>
               <div className="mb-6 px-2 pt-2">
                 <Logo />
               </div>
@@ -126,16 +126,16 @@ function AppShell() {
           <div className="min-w-0">
             <p className="truncate text-sm font-medium">{me?.organizations?.name ?? "…"}</p>
           </div>
-          <div className="ml-auto flex items-center gap-1">
+          <div className="ml-auto flex shrink-0 items-center gap-1">
             <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Cambiar tema">
               <Sun className="hidden dark:block" />
               <Moon className="dark:hidden" />
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="grid size-9 place-items-center rounded-full bg-accent text-xs font-semibold text-accent-foreground" aria-label="Cuenta">
+                <Button variant="ghost" size="icon" className="rounded-full bg-accent text-xs font-semibold text-accent-foreground" aria-label="Cuenta">
                   {initials}
-                </button>
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
@@ -153,7 +153,7 @@ function AppShell() {
               </DropdownMenuContent>
             </DropdownMenu>
             <span className="mx-3 hidden h-8 w-px bg-border sm:block" aria-hidden />
-            <Logo className="h-9 pl-1" />
+            <Logo className="h-7 shrink-0 pl-1 sm:h-9" />
           </div>
         </header>
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-8">

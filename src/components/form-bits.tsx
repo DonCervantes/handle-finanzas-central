@@ -1,6 +1,7 @@
 import type { ReactNode, SelectHTMLAttributes } from "react";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/table-feedback";
 
 export function FormField({ label, htmlFor, children }: { label: string; htmlFor: string; children: ReactNode }) {
   return (
@@ -23,11 +24,11 @@ export function NativeSelect({ className, ...props }: SelectHTMLAttributes<HTMLS
   );
 }
 
-export function EmptyRow({ cols, text }: { cols: number; text: string }) {
+export function EmptyRow({ cols, text, action }: { cols: number; text: string; action?: ReactNode }) {
   return (
     <tr>
       <td colSpan={cols} className="py-10 text-center text-sm text-muted-foreground">
-        {text}
+        <EmptyState text={text}>{action}</EmptyState>
       </td>
     </tr>
   );

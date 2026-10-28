@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ArrowDownRight, ArrowUpRight, Users, UserCog, Wallet } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
@@ -8,17 +8,23 @@ import { FinanceAssistant } from "@/components/finance-assistant";
 import { StatusBadge } from "@/components/status-badge";
 import { accountsQuery, clientsQuery, employeesQuery, transactionsQuery } from "@/lib/data";
 import { formatDate, formatMXN } from "@/lib/format";
+import { pageMeta } from "@/lib/metadata";
+import { DirectoryLoading, DirectoryError } from "@/components/directory-feedback";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — Handle" }, { name: "description", content: "Resumen financiero de tu empresa." }] }),
+  loader: async ({ context }) => { await Promise.all([context.queryClient.ensureQueryData(accountsQuery), context.queryClient.ensureQueryData(transactionsQuery), context.queryClient.ensureQueryData(clientsQuery), context.queryClient.ensureQueryData(employeesQuery)]); },
+  head: () => pageMeta("Dashboard", "Resumen financiero y actividad de tu empresa en Handle."),
+  pendingComponent: DirectoryLoading,
+  errorComponent: DirectoryError,
+  notFoundComponent: () => <p>No se encontró esta página.</p>,
   component: Dashboard,
 });
 
 function Dashboard() {
-  const { data: accounts = [] } = useQuery(accountsQuery);
-  const { data: tx = [] } = useQuery(transactionsQuery);
-  const { data: clients = [] } = useQuery(clientsQuery);
-  const { data: employees = [] } = useQuery(employeesQuery);
+  const { data: accounts = [] } = useSuspenseQuery(accountsQuery);
+  const { data: tx = [] } = useSuspenseQuery(transactionsQuery);
+  const { data: clients = [] } = useSuspenseQuery(clientsQuery);
+  const { data: employees = [] } = useSuspenseQuery(employeesQuery);
 
   const now = new Date();
   const thisMonth = tx.filter((t) => {
@@ -61,7 +67,7 @@ function Dashboard() {
                 {s.label}
                 <s.icon className={`size-4 ${s.tone ?? ""}`} />
               </div>
-              <p className="tabular mt-3 text-2xl font-bold tracking-tight">{s.value}</p>
+              <p className="tabular mt-3 break-words text-xl font-bold">{s.value}</p>
             </CardContent>
           </Card>
         ))}

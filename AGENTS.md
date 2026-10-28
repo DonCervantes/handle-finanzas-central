@@ -18,3 +18,5 @@
 - Quotes go through the `QuoteProvider` interface in `quote.server.ts`; swap the fixed-rate stub for Etherfuse there.
 - AI calls go through `groqChat` + `runAgent` in `src/lib/ai.server.ts` (Groq OpenAI-compatible API, key GROQ_API_KEY); every call is logged to `agent_runs` via the user's RLS client. Assistant context is built server-side from the caller's org only.
 - Outbound automation uses `emitN8nEvent` (`n8n.server.ts`, N8N_WEBHOOK_URL): never throws, 5s timeout, no-op when unset. Why: automation must never block or revert a payment.
+- Directory filtering and client statement selection live in browser-safe pure helpers; URL search parameters preserve filters across navigation.
+- Shared table feedback and route metadata helpers keep loading, empty, error and social-preview states consistent without altering payment or AI workflows.
