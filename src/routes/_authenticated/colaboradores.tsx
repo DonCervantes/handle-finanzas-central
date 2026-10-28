@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -15,16 +15,29 @@ import { StatusBadge } from "@/components/status-badge";
 import { EmptyRow, FormField, NativeSelect } from "@/components/form-bits";
 import { employeesQuery } from "@/lib/data";
 import { formatDate, formatMXN } from "@/lib/format";
+import { matchesDirectory, employeeStatuses } from "@/lib/directory";
+import { pageMeta } from "@/lib/metadata";
+import { DirectoryLoading, DirectoryError } from "@/components/directory-feedback";
+import { DeleteConfirmation } from "@/components/delete-confirmation";
 
 export const Route = createFileRoute("/_authenticated/colaboradores")({
-  head: () => ({ meta: [{ title: "Colaboradores — Handle" }, { name: "description", content: "Directorio de tu equipo." }] }),
+  validateSearch: (search: Record<string, unknown>) => ({ q: typeof search.q === "string" ? search.q : "", status: typeof search.status === "string" ? search.status : "" }),
+  loader: async ({ context }) => { await context.queryClient.ensureQueryData(employeesQuery); },
+  head: () => pageMeta("Colaboradores", "Directorio de colaboradores y datos de tu equipo en Handle."),
+  pendingComponent: DirectoryLoading,
+  errorComponent: DirectoryError,
+  notFoundComponent: () => <p>Colaborador no encontrado.</p>,
   component: Colaboradores,
 });
 
 type Employee = Tables<"employees">;
 
 function Colaboradores() {
-  const { data: employees = [] } = useQuery(employeesQuery);
+  const { data: employees } = useSuspenseQuery(employeesQuery);
+  const { q, status } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const rows = employees.filter((e) => matchesDirectory({ name: e.full_name, secondary: e.position, status: e.status }, q, status));
+  const clear = () => navigate({ search: { q: "", status: "" }, replace: true });
   const [editing, setEditing] = useState<Employee | null | "new">(null);
   const qc = useQueryClient();
   const del = useMutation({
@@ -33,7 +46,7 @@ function Colaboradores() {
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["employees"] }); toast.success("Colaborador eliminado"); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: () => toast.error("No pudimos guardar el cambio. Intenta de nuevo."),
   });
 
   return (
@@ -44,6 +57,11 @@ function Colaboradores() {
         actions={<Button onClick={() => setEditing("new")}><Plus /> Nuevo colaborador</Button>}
       />
       <Card className="shadow-card">
+        <div className="grid gap-3 border-b p-4 sm:grid-cols-[minmax(0,1fr)_12rem_auto]">
+          <div className="relative min-w-0"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input aria-label="Buscar colaboradores" placeholder="Buscar por nombre o puesto" className="pl-9" value={q} onChange={(e) => navigate({ search: (prev) => ({ ...prev, q: e.target.value }), replace: true })} /></div>
+          <NativeSelect aria-label="Filtrar colaboradores por estado" value={status} onChange={(e) => navigate({ search: (prev) => ({ ...prev, status: e.target.value }), replace: true })}><option value="">Todos los estados</option>{employeeStatuses.map((value) => <option key={value} value={value}>{value === "activo" ? "Activo" : "Inactivo"}</option>)}<option value="vacaciones">Vacaciones (anterior)</option><option value="baja">Baja (anterior)</option></NativeSelect>
+          {(q || status) && <Button variant="ghost" onClick={clear}>Limpiar</Button>}
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -56,8 +74,8 @@ function Colaboradores() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {employees.length === 0 && <EmptyRow cols={6} text="Aún no hay colaboradores." />}
-            {employees.map((e) => (
+            {rows.length === 0 && <EmptyRow cols={6} text={employees.length ? "No encontramos colaboradores con estos filtros." : "Agrega a la primera persona de tu equipo."} action={employees.length ? <Button variant="outline" onClick={clear}>Limpiar filtros</Button> : <Button onClick={() => setEditing("new")}><Plus /> Nuevo colaborador</Button>} />}
+            {rows.map((e) => (
               <TableRow key={e.id}>
                 <TableCell className="font-medium">{e.full_name}</TableCell>
                 <TableCell className="text-muted-foreground">{e.position ?? "—"}</TableCell>
@@ -65,8 +83,8 @@ function Colaboradores() {
                 <TableCell><StatusBadge status={e.status} /></TableCell>
                 <TableCell className="tabular text-right">{formatMXN(e.salary)}</TableCell>
                 <TableCell className="text-right">
-                  <Button size="icon" variant="ghost" aria-label="Editar" onClick={() => setEditing(e)}><Pencil /></Button>
-                  <Button size="icon" variant="ghost" aria-label="Eliminar" onClick={() => confirm(`¿Eliminar a ${e.full_name}?`) && del.mutate(e.id)}><Trash2 /></Button>
+                  <Button size="icon" variant="ghost" aria-label={`Editar a ${e.full_name}`} title="Editar colaborador" onClick={() => setEditing(e)}><Pencil /></Button>
+                  <DeleteConfirmation name={e.full_name} pending={del.isPending} onDelete={() => del.mutateAsync(e.id)} />
                 </TableCell>
               </TableRow>
             ))}
@@ -99,7 +117,7 @@ function EmployeeDialog({ employee, onClose }: { employee: Employee | null; onCl
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["employees"] }); toast.success("Colaborador guardado"); onClose(); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: () => toast.error("No pudimos guardar el cambio. Intenta de nuevo."),
   });
   const submit = (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); m.mutate(new FormData(e.currentTarget)); };
   return (
@@ -115,10 +133,11 @@ function EmployeeDialog({ employee, onClose }: { employee: Employee | null; onCl
           <FormField label="Fecha de ingreso" htmlFor="hire_date"><Input id="hire_date" name="hire_date" type="date" required defaultValue={employee?.hire_date ?? new Date().toISOString().slice(0, 10)} /></FormField>
           <FormField label="Estado" htmlFor="status">
             <NativeSelect id="status" name="status" defaultValue={employee?.status ?? "activo"}>
-              <option value="activo">Activo</option><option value="vacaciones">Vacaciones</option><option value="baja">Baja</option>
+              {employeeStatuses.map((value) => <option key={value} value={value}>{value === "activo" ? "Activo" : "Inactivo"}</option>)}
+              {employee && !employeeStatuses.some((value) => value === employee.status) && <option value={employee.status}>{employee.status === "vacaciones" ? "Vacaciones (anterior)" : "Baja (anterior)"}</option>}
             </NativeSelect>
           </FormField>
-          <DialogFooter className="sm:col-span-2"><Button disabled={m.isPending}>Guardar</Button></DialogFooter>
+          <DialogFooter className="sm:col-span-2"><Button type="button" variant="outline" onClick={onClose}>Cancelar</Button><Button disabled={m.isPending}>{m.isPending ? "Guardando…" : "Guardar"}</Button></DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
