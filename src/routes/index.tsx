@@ -1,24 +1,67 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Banknote, Send, Users, UserCog } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/logo";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Handle — El ERP ligero para PyMEs de LATAM" },
+      { name: "description", content: "Finanzas, pagos a proveedores, CRM y RH en una sola plataforma pensada para México." },
+      { property: "og:title", content: "Handle — El ERP ligero para PyMEs de LATAM" },
+      { property: "og:description", content: "Finanzas, pagos a proveedores, CRM y RH en una sola plataforma pensada para México." },
+    ],
+  }),
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+const features = [
+  { icon: Banknote, title: "Finanzas", text: "Ingresos, egresos y cuentas en tiempo real." },
+  { icon: Send, title: "Pagos a proveedores", text: "Órdenes de pago listas para liquidarse on-chain." },
+  { icon: Users, title: "Clientes", text: "CRM simple con saldos y contactos." },
+  { icon: UserCog, title: "Colaboradores", text: "Directorio de tu equipo y sus datos clave." },
+];
+
+function Landing() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen">
+      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+        <Logo />
+        <Button asChild variant="ghost">
+          <Link to="/auth">Iniciar sesión</Link>
+        </Button>
+      </header>
+      <main className="mx-auto max-w-6xl px-6 pb-24 pt-20">
+        <div className="max-w-2xl">
+          <span className="rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
+            Hecho para PyMEs de México
+          </span>
+          <h1 className="mt-6 text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
+            Toda tu operación,
+            <br />
+            <span className="text-primary">en una sola mano.</span>
+          </h1>
+          <p className="mt-6 text-lg text-muted-foreground">
+            Handle reúne finanzas, pagos a proveedores, clientes y colaboradores en un ERP ligero, claro y en español.
+          </p>
+          <div className="mt-10 flex gap-3">
+            <Button asChild size="lg">
+              <Link to="/auth">
+                Crear cuenta gratis <ArrowRight />
+              </Link>
+            </Button>
+          </div>
+        </div>
+        <div className="mt-24 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {features.map((f) => (
+            <div key={f.title} className="rounded-xl border bg-card p-6 shadow-card">
+              <f.icon className="size-5 text-primary" />
+              <h3 className="mt-4 font-medium">{f.title}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{f.text}</p>
+            </div>
+          ))}
+        </div>
+      </main>
     </div>
   );
 }
