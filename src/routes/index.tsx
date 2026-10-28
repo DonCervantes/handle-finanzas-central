@@ -39,7 +39,7 @@ function Landing() {
           <h1 className="mt-6 text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
             Toda tu operación,
             <br />
-            <span className="text-primary">en una sola mano.</span>
+            <span className="text-gold">en una sola mano.</span>
           </h1>
           <p className="mt-6 text-lg text-muted-foreground">
             Handle reúne finanzas, pagos a proveedores, clientes y colaboradores en un ERP ligero, claro y en español.
@@ -55,7 +55,7 @@ function Landing() {
         <div className="mt-24 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((f) => (
             <div key={f.title} className="rounded-xl border bg-card p-6 shadow-card">
-              <f.icon className="size-5 text-primary" />
+              <f.icon className="size-5 text-gold" />
               <h3 className="mt-4 font-medium">{f.title}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{f.text}</p>
             </div>

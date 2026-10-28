@@ -49,7 +49,7 @@ const nav = [
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const linkCls =
     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
-  const active = { className: "bg-sidebar-accent text-sidebar-accent-foreground" };
+  const active = { className: "bg-sidebar-accent font-semibold text-sidebar-accent-foreground [&>svg]:text-sidebar-primary" };
   return (
     <nav className="flex flex-1 flex-col gap-1">
       {nav.map((n) => (
@@ -103,13 +103,13 @@ function AppShell() {
   return (
     <div className="flex min-h-screen">
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r bg-sidebar px-4 py-6 md:flex">
-        <div className="mb-8 px-2">
-          <Logo />
+        <div className="mb-10 px-2 pt-1">
+          <Logo className="h-8" />
         </div>
         <NavLinks />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col md:pl-64">
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur sm:px-8">
+        <header className="sticky top-0 z-20 flex h-[4.5rem] items-center gap-3 border-b bg-background/80 px-4 backdrop-blur sm:px-8">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir menú">
@@ -141,7 +141,7 @@ function AppShell() {
                 <DropdownMenuLabel>
                   <p className="truncate">{me?.full_name}</p>
                   <p className="truncate text-xs font-normal text-muted-foreground">{me?.email}</p>
-                  <p className="mt-1 text-xs font-normal text-primary">{roleLabels[me?.role ?? ""]}</p>
+                  <p className="mt-1 text-xs font-normal text-gold">{roleLabels[me?.role ?? ""]}</p>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate({ to: "/configuracion" })}>
@@ -152,6 +152,8 @@ function AppShell() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <span className="mx-3 hidden h-8 w-px bg-border sm:block" aria-hidden />
+            <Logo className="h-9 pl-1" />
           </div>
         </header>
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-8">

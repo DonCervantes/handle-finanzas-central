@@ -42,7 +42,7 @@ function Clientes() {
             {clients.map((c) => (
               <TableRow key={c.id}>
                 <TableCell>
-                  <Link to="/clientes/$id" params={{ id: c.id }} className="font-medium hover:text-primary">{c.name}</Link>
+                  <Link to="/clientes/$id" params={{ id: c.id }} className="font-medium hover:text-gold">{c.name}</Link>
                 </TableCell>
                 <TableCell className="text-muted-foreground">{c.email ?? "—"}</TableCell>
                 <TableCell className="text-muted-foreground">{c.phone ?? "—"}</TableCell>
