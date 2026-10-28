@@ -125,6 +125,6 @@ export const suggestCategories = createServerFn({ method: "POST" })
 export const getIntegrationsStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async () => ({
-    groq: { configured: !!process.env["GROQ_API_KEY"], model: getGroqModel },
+    groq: { configured: !!process.env["GROQ_API_KEY"], model: getGroqModel() },
     n8n: { configured: !!process.env["N8N_WEBHOOK_URL"], events: [...N8N_EVENTS] },
   }));
