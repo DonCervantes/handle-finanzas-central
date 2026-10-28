@@ -1,5 +1,5 @@
 // Groq (OpenAI-compatible) client + agent_runs logging. Server-only.
-export const DEFAULT_GROQ_MODEL = "llama-3.1-8b-instant";
+export const DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b";
 export const getGroqModel = () => process.env["GROQ_MODEL"]?.trim() || DEFAULT_GROQ_MODEL;
 
 export class MissingKeyError extends Error {}
