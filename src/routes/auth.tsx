@@ -63,12 +63,19 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) {
+      const msg = error.message;
       toast.error(
-        /not allowed|invalid/i.test(error.message)
-          ? "Ese correo no es válido. Usa un correo real."
-          : /registered|exists/i.test(error.message)
-            ? "Ese correo ya tiene una cuenta. Inicia sesión."
-            : "No pudimos crear tu cuenta. Intenta de nuevo.",
+        /weak|easy to guess|pwned|leaked/i.test(msg) || error.code === "weak_password"
+          ? "Esa contraseña es muy común o apareció en filtraciones. Elige una más segura (combina letras, números y símbolos)."
+          : /at least|characters/i.test(msg)
+            ? "La contraseña debe tener al menos 6 caracteres."
+            : /rate limit|too many/i.test(msg)
+              ? "Demasiados intentos. Espera un momento e intenta de nuevo."
+              : /registered|exists/i.test(msg)
+                ? "Ese correo ya tiene una cuenta. Inicia sesión."
+                : /not allowed|invalid/i.test(msg)
+                  ? "Ese correo no es válido. Usa un correo real."
+                  : "No pudimos crear tu cuenta. Intenta de nuevo.",
       );
       return;
     }
